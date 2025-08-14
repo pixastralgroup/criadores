@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Webhook Discord</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        .warning { color: #ffc107; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .log-entry {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .log-entry.error { border-left-color: #dc3545; }
+        .log-entry.success { border-left-color: #28a745; }
+        .log-entry.warning { border-left-color: #ffc107; }
+        .log-entry.info { border-left-color: #17a2b8; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+        .status-unknown { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>🔗 Teste do Webhook Discord</h1>
+    
+    <div class="test-section">
+        <h2>📊 Status do Sistema</h2>
+        <div id="system-status">
+            <p><span class="status-indicator status-unknown"></span>Verificando status...</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 Teste de Conectividade</h2>
+        <button onclick="testWebhook()">Testar Webhook</button>
+        <div id="webhook-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Testes de Log</h2>
+        <button onclick="testErrorLog()">Testar Log de Erro</button>
+        <button onclick="testWarningLog()">Testar Log de Warning</button>
+        <button onclick="testInfoLog()">Testar Log de Info</button>
+        <button onclick="testSuccessLog()">Testar Log de Sucesso</button>
+        <div id="log-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Logs do Sistema</h2>
+        <button onclick="clearLogs()">Limpar Logs</button>
+        <div id="logs"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        async function checkSystemStatus() {
+            const statusDiv = document.getElementById('system-status');
+            
+            try {
+                const response = await fetch('/api/test-webhook');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = '<p><span class="status-indicator status-online"></span>Webhook configurado e funcionando</p>';
+                    log('✅ Sistema de webhook funcionando', 'success');
+                } else {
+                    statusDiv.innerHTML = '<p><span class="status-indicator status-offline"></span>Webhook não configurado ou com erro</p>';
+                    log('❌ Webhook não configurado', 'error');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p><span class="status-indicator status-offline"></span>Erro ao verificar status</p>';
+                log(`❌ Erro ao verificar status: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWebhook() {
+            const resultDiv = document.getElementById('webhook-result');
+            resultDiv.innerHTML = '<p class="info">Testando...</p>';
+            
+            try {
+                log('🧪 Iniciando teste do webhook...');
+                const response = await fetch('/api/test-webhook');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '<p class="success">✅ Webhook testado com sucesso! Verifique o Discord.</p>';
+                    log('✅ Webhook testado com sucesso', 'success');
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Falha no teste: ${data.message}</p>`;
+                    log(`❌ Falha no teste: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Erro: ${error.message}</p>`;
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testErrorLog() {
+            try {
+                log('🚨 Enviando log de erro de teste...');
+                const response = await fetch('/api/test-log/error', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ teste: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Log de erro enviado com sucesso! Verifique o Discord.', 'success');
+                } else {
+                    log(`❌ Falha ao enviar log de erro: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro ao testar log: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWarningLog() {
+            try {
+                log('⚠️ Enviando log de warning de teste...');
+                const response = await fetch('/api/test-log/warning', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ teste: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Log de warning enviado com sucesso! Verifique o Discord.', 'success');
+                } else {
+                    log(`❌ Falha ao enviar log de warning: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro ao testar warning: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInfoLog() {
+            try {
+                log('ℹ️ Enviando log de info de teste...');
+                const response = await fetch('/api/test-log/info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ teste: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Log de info enviado com sucesso! Verifique o Discord.', 'success');
+                } else {
+                    log(`❌ Falha ao enviar log de info: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro ao testar info: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSuccessLog() {
+            try {
+                log('✅ Enviando log de sucesso de teste...');
+                const response = await fetch('/api/test-log/success', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ teste: true })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Log de sucesso enviado com sucesso! Verifique o Discord.', 'success');
+                } else {
+                    log(`❌ Falha ao enviar log de sucesso: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro ao testar sucesso: ${error.message}`, 'error');
+            }
+        }
+
+        // Verificar status ao carregar a página
+        window.addEventListener('load', () => {
+            log('Página carregada. Verificando status do sistema...');
+            checkSystemStatus();
+        });
+    </script>
+</body>
+</html> 

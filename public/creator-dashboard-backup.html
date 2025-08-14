@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Criador</title>
+    <link rel="stylesheet" href="creator-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-avatar {
+            flex-shrink: 0;
+        }
+
+        .profile-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-avatar-placeholder i {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .edit-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid white;
+            color: #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-avatar-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .edit-avatar-btn i {
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-label i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .profile-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .profile-value.status-pending {
+            color: #fbbf24;
+        }
+
+        .profile-value.status-approved {
+            color: #34d399;
+        }
+
+        .profile-value.status-rejected {
+            color: #f87171;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            background: #38a169;
+        }
+
+        .toast-error {
+            background: #e53e3e;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #718096;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .avatar-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .avatar-upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .avatar-upload-area.dragover {
+            border-color: #667eea;
+            background: #edf2f7;
+            transform: scale(1.02);
+        }
+
+        .avatar-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Live Button Styles */
+        .live-button-container {
+            margin-top: 20px;
+        }
+
+        .live-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .live-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .live-icon {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .live-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .live-content {
+            flex: 1;
+        }
+
+        .live-content h3 {
+            font-size: 1.4rem;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .live-content p {
+            margin: 0 0 15px 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .live-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .live-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .live-button i {
+            font-size: 0.9rem;
+        }
+
+        /* WL Codes Styles */
+        .wl-codes-container {
+            margin-top: 20px;
+        }
+
+        .wl-codes-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .wl-codes-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4);
+        }
+
+        .wl-codes-icon {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .wl-codes-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .wl-codes-content {
+            flex: 1;
+        }
+
+        .wl-codes-content h3 {
+            font-size: 1.4rem;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .wl-codes-content p {
+            margin: 0 0 15px 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .wl-codes-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .codes-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            width: 80px;
+            text-align: center;
+        }
+
+        .codes-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .codes-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .wl-codes-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wl-codes-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .wl-codes-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wl-codes-button i {
+            font-size: 0.9rem;
+        }
+
+        /* Codes List Styles */
+        .codes-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .code-text {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .profile-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-item {
+                justify-content: center;
+            }
+            
+            .profile-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-user-circle"></i> Painel do Criador</h1>
+            <p>Gerencie seus conteúdos e acompanhe suas estatísticas</p>
+        </div>
+
+        <!-- Informações do Perfil -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i>
+                Informações do Perfil
+            </h2>
+            <div class="profile-grid">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <div class="avatar-container">
+                            <img id="profile-image" src="" alt="Avatar" style="display: none;">
+                            <div id="profile-avatar-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button class="edit-avatar-btn" onclick="openEditAvatar()">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="creator-name">Carregando...</h3>
+                        <div class="profile-details">
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fas fa-gamepad"></i> ID do Jogo:</span>
+                                <span class="profile-value" id="creator-game-id">Carregando...</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fab fa-discord"></i> Discord ID:</span>
+                                <span class="profile-value" id="creator-discord">Carregando...</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fas fa-tag"></i> Categoria:</span>
+                                <span class="profile-value" id="creator-category">Carregando...</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fas fa-star"></i> Nível:</span>
+                                <span class="profile-value" id="creator-level">Carregando...</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fas fa-check-circle"></i> Status da Conta:</span>
+                                <span class="profile-value" id="creator-status">Carregando...</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label"><i class="fas fa-calendar"></i> Cadastro:</span>
+                                <span class="profile-value" id="creator-date">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botão Live - Só aparece para categoria live -->
+            <div id="live-button-container" class="live-button-container" style="display: none;">
+                <div class="live-card">
+                    <div class="live-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <div class="live-content">
+                        <h3>Ativar Live</h3>
+                        <p>Receba o cargo de live por 1 hora no Discord</p>
+                        <button id="live-button" class="live-button" onclick="activateLive()">
+                            <i class="fas fa-play"></i>
+                            Ativar Live
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botão Gerar Códigos WL - Para todos os criadores -->
+            <div class="wl-codes-container">
+                <div class="wl-codes-card">
+                    <div class="wl-codes-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="wl-codes-content">
+                        <h3>Gerar Códigos de WL</h3>
+                        <p>Gere códigos para liberar whitelist de jogadores</p>
+                        <div class="wl-codes-controls">
+                            <input type="number" id="codesQuantity" min="1" max="50" value="1" class="codes-input">
+                            <button id="generateCodesBtn" class="wl-codes-button" onclick="generateWLCodes()">
+                                <i class="fas fa-plus"></i>
+                                Gerar Códigos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card de Progresso de Nível -->
+            <div class="progress-container">
+                <div class="progress-card">
+                    <div class="progress-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="progress-content">
+                        <h3>Progresso de Nível</h3>
+                        <p>Acompanhe seu progresso para o próximo nível</p>
+                        <div class="progress-controls">
+                            <div class="progress-info">
+                                <span class="progress-text">Nível <span id="current-level-display">1</span> → <span id="next-level-display">2</span></span>
+                                <span class="progress-hours"><span id="hours-current-display">0</span> / <span id="hours-needed-display">60</span> horas</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill-display" id="progress-fill-display"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <!-- Barra de Progresso para Up de Nível -->
+            <div class="level-progress-card">
+                <div class="level-progress-header">
+                    <h3><i class="fas fa-arrow-up"></i> Progresso para Próximo Nível</h3>
+                    <span class="level-info">Nível <span id="current-level">1</span> → <span id="next-level">2</span></span>
+                </div>
+                <div class="level-progress-bar">
+                    <div class="progress-fill" id="level-progress-fill"></div>
+                </div>
+                <div class="level-progress-text">
+                    <span id="hours-current">0</span> / <span id="hours-needed">60</span> horas
+                    <div class="progress-details">
+                        <span class="completed">✅ Concluído: <span id="hours-completed">0</span>h</span>
+                        <span class="remaining">⏳ Falta: <span id="hours-remaining">60</span>h</span>
+                    </div>
+                </div>
+                <div class="level-progress-time" id="time-remaining">
+                    Próximo up disponível em: <span id="days-remaining">-</span> dias
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-number" id="conteudos-aprovados">0</div>
+                <div class="stat-label">Aprovados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-number" id="conteudos-pendentes">0</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-number" id="nivel-atual">1</div>
+                <div class="stat-label">Nível Atual</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-gift"></i></div>
+                <div class="stat-number" id="bonus-resgate">R$ 0,00</div>
+                <div class="stat-label">Bônus para Resgate</div>
+            </div>
+        </div>
+
+        <!-- Formulário de Registro -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i>
+                Registrar Novo Conteúdo
+            </h2>
+            
+            <form id="contentForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Conteúdo *</label>
+                        <select id="tipo" name="tipo" class="form-control" required onchange="toggleLiveFields()">
+                            <option value="">Selecione o tipo</option>
+                            <option value="video">Vídeo</option>
+                            <option value="fotos">Fotos</option>
+                            <option value="live">Live</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Campos para vídeo e fotos -->
+                    <div id="video-fotos-fields">
+                        <div class="form-group">
+                            <label for="likes">Likes *</label>
+                            <input type="number" id="likes" name="likes" class="form-control" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="comentarios">Comentários *</label>
+                            <input type="number" id="comentarios" name="comentarios" class="form-control" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="visualizacoes">Visualizações</label>
+                            <input type="number" id="visualizacoes" name="visualizacoes" class="form-control" min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <!-- Campos específicos para live -->
+                    <div id="live-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="comentarios-live">Comentários *</label>
+                            <input type="number" id="comentarios-live" name="comentarios-live" class="form-control" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="likes-live">Likes *</label>
+                            <input type="number" id="likes-live" name="likes-live" class="form-control" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="visualizacoes-live">Visualizações *</label>
+                            <input type="number" id="visualizacoes-live" name="visualizacoes-live" class="form-control" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tempo-live">Tempo da Live (horas) *</label>
+                            <input type="number" id="tempo-live" name="tempo-live" class="form-control" min="0" step="0.5" placeholder="Ex: 2.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de Upload de Imagem -->
+                <div class="form-group">
+                    <label>Imagem do Conteúdo</label>
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Arraste uma imagem aqui ou clique para selecionar</div>
+                        <div class="upload-hint">PNG, JPG até 5MB</div>
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    </div>
+                    <img id="imagePreview" class="preview-image" style="display: none;">
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" name="observacoes" class="form-control" rows="3" placeholder="Adicione observações sobre o conteúdo..."></textarea>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Registrar Conteúdo
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()" style="margin-left: 15px;">
+                        <i class="fas fa-undo"></i>
+                        Limpar
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Registrando conteúdo...</p>
+            </div>
+        </div>
+
+        <!-- Lista de Conteúdos -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-list"></i>
+                Meus Conteúdos
+            </h2>
+            
+            <div class="content-list" id="contentList">
+                <div style="text-align: center; color: #718096; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                    <p>Carregando conteúdos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal para Editar Avatar -->
+    <div id="avatar-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-camera"></i> Editar Foto do Perfil</h3>
+                <button class="modal-close" onclick="closeEditAvatar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-upload-area" id="avatarUploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Arraste uma nova foto aqui ou clique para selecionar</div>
+                    <div class="upload-hint">PNG, JPG até 2MB</div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                </div>
+                <img id="avatarPreview" class="avatar-preview" style="display: none;">
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeEditAvatar()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAvatar()" id="saveAvatarBtn" disabled>
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="creator-dashboard.js"></script>
+</body>
+</html> 

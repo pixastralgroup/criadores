@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidade Alto Astral - Login Criador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="creator-login.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-user"></i>
+                <h1>Área do Criador</h1>
+            </div>
+            <nav class="nav">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Voltar ao Início
+                </a>
+            </nav>
+        </header>
+
+        <!-- Login Form -->
+        <div class="login-section">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Login do Criador</h2>
+                    <p>Faça login para acessar sua área exclusiva</p>
+                </div>
+                <form id="creator-login-form">
+                    <div class="form-group">
+                        <label for="game_id">ID do Jogo</label>
+                        <input type="text" id="game_id" name="game_id" required placeholder="Digite seu ID do jogo">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required placeholder="Digite sua senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Entrar
+                    </button>
+                </form>
+                <div class="login-footer">
+                    <p>Não tem cadastro? <a href="/">Faça seu cadastro aqui</a></p>
+                    <p><a href="forgot-password.html" class="forgot-password-link">
+                        <i class="fas fa-key"></i> Esqueci minha senha
+                    </a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="creator-login.js"></script>
+</body>
+</html> 

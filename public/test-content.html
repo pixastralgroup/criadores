@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Registro de Conteúdo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste - Registro de Conteúdo</h1>
+    
+    <form id="test-form">
+        <div class="form-group">
+            <label for="tipo">Tipo de Conteúdo *</label>
+            <select id="tipo" name="tipo" required onchange="showFields()">
+                <option value="">Selecione o tipo</option>
+                <option value="video">Vídeo</option>
+                <option value="fotos">Fotos</option>
+                <option value="live">Live</option>
+            </select>
+        </div>
+
+        <!-- Campos para Vídeo -->
+        <div id="video-fields" class="hidden">
+            <div class="form-group">
+                <label for="video-visualizacoes">Visualizações</label>
+                <input type="number" id="video-visualizacoes" name="visualizacoes" min="0">
+            </div>
+            <div class="form-group">
+                <label for="video-likes">Likes *</label>
+                <input type="number" id="video-likes" name="likes" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="video-comentarios">Comentários *</label>
+                <input type="number" id="video-comentarios" name="comentarios" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="video-print">Print do vídeo *</label>
+                <input type="file" id="video-print" name="print_video" accept="image/*" required>
+            </div>
+        </div>
+
+        <!-- Campos para Fotos -->
+        <div id="fotos-fields" class="hidden">
+            <div class="form-group">
+                <label for="fotos-likes">Likes *</label>
+                <input type="number" id="fotos-likes" name="likes" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="fotos-comentarios">Comentários *</label>
+                <input type="number" id="fotos-comentarios" name="comentarios" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="fotos-print">Print da foto *</label>
+                <input type="file" id="fotos-print" name="print_foto" accept="image/*" required>
+            </div>
+        </div>
+
+        <!-- Campos para Live -->
+        <div id="live-fields" class="hidden">
+            <div class="form-group">
+                <label for="live-visualizacoes">Visualizações *</label>
+                <input type="number" id="live-visualizacoes" name="visualizacoes" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="live-likes">Likes *</label>
+                <input type="number" id="live-likes" name="likes" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="live-comentarios">Comentários *</label>
+                <input type="number" id="live-comentarios" name="comentarios" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="live-print">Print do vídeo *</label>
+                <input type="file" id="live-print" name="print_video" accept="image/*" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+        </div>
+
+        <button type="submit">Testar Registro</button>
+    </form>
+
+    <div id="log" class="log"></div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            console.log(message);
+        }
+
+        function showFields() {
+            const tipo = document.getElementById('tipo').value;
+            log('Tipo selecionado: ' + tipo);
+            
+            // Esconder todos os campos
+            document.querySelectorAll('[id$="-fields"]').forEach(field => {
+                field.classList.add('hidden');
+            });
+            
+            // Mostrar campos específicos
+            if (tipo) {
+                const fieldsDiv = document.getElementById(tipo + '-fields');
+                if (fieldsDiv) {
+                    fieldsDiv.classList.remove('hidden');
+                    log('Campos mostrados para: ' + tipo);
+                }
+            }
+        }
+
+        document.getElementById('test-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            log('Formulário submetido!');
+            
+            const formData = new FormData(this);
+            const tipo = formData.get('tipo');
+            
+            log('Tipo: ' + tipo);
+            log('FormData entries:');
+            for (let [key, value] of formData.entries()) {
+                log(key + ': ' + value);
+            }
+            
+            // Simular envio
+            try {
+                log('Simulando envio...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                log('Envio simulado com sucesso!');
+                alert('Teste concluído! Verifique os logs.');
+            } catch (error) {
+                log('Erro no teste: ' + error.message);
+            }
+        });
+
+        log('Página carregada');
+    </script>
+</body>
+</html> 

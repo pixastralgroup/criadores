@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidade Alto Astral - Painel do Criador</title>
+    <link rel="stylesheet" href="creator-dashboard.css">
+    <link rel="stylesheet" href="creator-dashboard-dark.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de Bloqueio -->
+        <div id="blocked-screen" class="blocked-screen hidden">
+            <div class="blocked-content">
+                <div class="blocked-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 id="blocked-title">Acesso Bloqueado</h2>
+                <p id="blocked-message">Seu cadastro está sendo analisado. Aguarde a aprovação para acessar o painel.</p>
+                <div class="blocked-status">
+                    <span class="status-badge" id="blocked-status-badge">Pendente</span>
+                </div>
+                <button class="btn btn-primary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content" class="dashboard-content">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-user-circle"></i> Painel do Criador</h1>
+                <p>Gerencie seus conteúdos e acompanhe seu progresso</p>
+            </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Profile Card -->
+                <div class="card profile-card">
+                    <div class="profile-content">
+                        <div class="avatar-section">
+                            <div class="avatar-container">
+                                <div class="avatar-glow"></div>
+                                <img id="profile-image" src="" alt="Avatar" style="display: none;">
+                                <div id="profile-avatar-placeholder" class="avatar-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <button class="edit-avatar-btn" onclick="openEditAvatar()">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h3 id="creator-name">Carregando...</h3>
+                            <div class="profile-details">
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fas fa-gamepad"></i> ID:</span>
+                                    <span class="profile-value" id="creator-game-id">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fab fa-discord"></i> Discord:</span>
+                                    <span class="profile-value" id="creator-discord">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fas fa-tag"></i> Categoria:</span>
+                                    <span class="profile-value" id="creator-category">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fas fa-check-circle"></i> Status:</span>
+                                    <span class="profile-value" id="creator-status">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fas fa-star"></i> Nível:</span>
+                                    <span class="profile-value" id="creator-level">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="profile-label"><i class="fas fa-calendar"></i> Registro:</span>
+                                    <span class="profile-value" id="creator-date">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar card-icon"></i>
+                        <h2 class="card-title">Estatísticas</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="valor-vendido-cupom">R$ 0,00</div>
+                            <div class="stat-label">Valor Vendido no Cupom</div>
+                            <div class="cupom-info">
+                                <span class="cupom-name" id="cupom-name">N/A</span>
+                                <button class="btn btn-sm btn-outline" onclick="copyCupom()" id="copy-cupom-btn">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <button class="btn btn-primary btn-sm mt-2" onclick="createCupom()" id="create-cupom-btn">
+                                <i class="fas fa-plus"></i>
+                                Criar Cupom
+                            </button>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="conteudos-pendentes">0</div>
+                            <div class="stat-label">Pendentes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="conteudos-aprovados">0</div>
+                            <div class="stat-label">Aprovados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon info">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="total-indicacoes">0</div>
+                            <div class="stat-label">Indicações</div>
+                            <button class="btn btn-primary btn-sm mt-2" onclick="generateWLCodes()">
+                                <i class="fas fa-ticket-alt"></i>
+                                Gerar Códigos WL
+                            </button>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon info">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="bonus-resgate">R$ 0,00</div>
+                            <div class="stat-label">Bônus Disponível</div>
+                            <button class="btn btn-primary btn-sm mt-2" onclick="openRedeemModal()" id="redeem-btn">
+                                <i class="fas fa-gift"></i>
+                                Resgatar
+                            </button>
+                        </div>
+                        <!-- Stat Card para Valor Ganho com Conteúdo Monetizado (apenas para contratados) -->
+                        <div class="stat-card" id="valor-ganho-conteudo-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="stat-number" id="valor-ganho-conteudo">R$ 0,00</div>
+                            <div class="stat-label">Ganhos com Conteúdo</div>
+                            <div class="stat-description">
+                                <small>Valor ganho com lives, vídeos aprovados e indicações</small>
+                            </div>
+                            <!-- Botão de Saque (apenas para contratados que bateram todas as metas) -->
+                            <button class="btn btn-success btn-sm mt-2" onclick="openSaqueModal()" id="saque-btn" style="display: none;">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Efetuar Saque
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progresso de Nível -->
+                <div class="card progress-card">
+                    <div class="progress-header">
+                        <div>
+                            <h3 class="card-title" style="color: white; margin: 0;">Progresso de Nível</h3>
+                            <div class="progress-levels">Nível <span id="current-level">1</span> → <span id="next-level">2</span></div>
+                        </div>
+                        <div class="text-right">
+                        </div>
+                    </div>
+                    
+                    <!-- Progresso por Área -->
+                    <div id="areas-progress-container">
+                        <!-- As barras de progresso serão criadas dinamicamente aqui -->
+                    </div>
+
+                </div>
+
+                <!-- Cards de Ranking -->
+                <div class="ranking-cards-container">
+                    <!-- Ranking de Vídeos -->
+                    <div class="card progress-card ranking-card videos-ranking">
+                        <div class="progress-header">
+                            <div>
+                                <h3 class="card-title" style="color: white; margin: 0;">
+                                    <i class="fas fa-video"></i> Top 3 - Vídeos
+                                </h3>
+                                <div class="progress-levels">Criadores com mais vídeos aprovados</div>
+                            </div>
+                        </div>
+                        <div id="videos-ranking-list" class="ranking-list">
+                            <div class="loading-ranking">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando ranking...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ranking de Horas de Live -->
+                    <div class="card progress-card ranking-card lives-ranking">
+                        <div class="progress-header">
+                            <div>
+                                <h3 class="card-title" style="color: white; margin: 0;">
+                                    <i class="fas fa-broadcast-tower"></i> Top 3 - Lives
+                                </h3>
+                                <div class="progress-levels">Criadores com mais horas de live</div>
+                            </div>
+                        </div>
+                        <div id="lives-ranking-list" class="ranking-list">
+                            <div class="loading-ranking">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando ranking...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ranking de Indicações -->
+                    <div class="card progress-card ranking-card indicacoes-ranking">
+                        <div class="progress-header">
+                            <div>
+                                <h3 class="card-title" style="color: white; margin: 0;">
+                                    <i class="fas fa-users"></i> Top 3 - Indicações
+                                </h3>
+                                <div class="progress-levels">Criadores com mais indicações</div>
+                            </div>
+                        </div>
+                        <div id="indicacoes-ranking-list" class="ranking-list">
+                            <div class="loading-ranking">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando ranking...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Conteúdos -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-list card-icon"></i>
+                        <h2 class="card-title">Meus Conteúdos</h2>
+                        <button class="btn btn-primary" onclick="openNewPublicationModal()">
+                            <i class="fas fa-plus"></i>
+                            Registrar Nova Publicação
+                        </button>
+                    </div>
+                    
+                    <div class="content-list" id="contentList">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <h3>Carregando conteúdos...</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Live Action Card -->
+                <div id="live-button-container" class="action-card live" style="display: none;">
+                    <div class="action-header">
+                        <div class="action-icon">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Ativar Live</h3>
+                            <p>Receba o cargo de live por 1 hora</p>
+                        </div>
+                    </div>
+                    <button id="live-button" class="action-btn" onclick="activateLive()">
+                        <i class="fas fa-play"></i>
+                        Ativar Live
+                    </button>
+                </div>
+
+                <!-- WL Codes Action Card -->
+
+                <!-- Old WL Card (hidden) -->
+                <div class="action-card wl" style="display: none;">
+                    <div class="action-header">
+                        <div class="action-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Códigos de WL</h3>
+                            <p>Gere códigos para liberar whitelist</p>
+                        </div>
+                    </div>
+                    <div class="action-controls">
+                        <input type="number" id="codesQuantity" min="1" max="50" value="1" class="action-input" placeholder="Qtd">
+                        <button id="generateCodesBtn" class="action-btn" onclick="generateWLCodes()">
+                            <i class="fas fa-plus"></i>
+                            Gerar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logout Button -->
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Resgatar Bônus -->
+    <div id="redeem-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-gift"></i>
+                    Resgatar Bônus
+                </h3>
+                <button class="modal-close" onclick="closeRedeemModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="redeem-form-section">
+                    <div class="redeem-info">
+                        <div class="bonus-display">
+                            <div class="bonus-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="bonus-amount">
+                                <span id="available-bonus">R$ 0,00</span>
+                                <p>Bônus Disponível</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="redeemForm">
+                        <div class="form-group">
+                            <label for="redeem-amount" class="form-label">Valor para Resgatar *</label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">R$</span>
+                                <input type="number" id="redeem-amount" name="amount" class="form-control amount-input" 
+                                       min="1" step="0.01" placeholder="0,00" required>
+                            </div>
+                            <div class="amount-hint">
+                                Valor mínimo: R$ 1,00
+                            </div>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeRedeemModal()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Confirmar Resgate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="redeem-success-section" class="hidden">
+                    <div class="success-animation">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Resgate Realizado com Sucesso!</h3>
+                        <p>Seu cupom foi gerado e está pronto para uso</p>
+                    </div>
+                    
+                    <div class="coupon-container">
+                        <div class="coupon-header">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>Cupom de Desconto</span>
+                        </div>
+                        <div class="coupon-body">
+                            <div class="coupon-code" id="generated-coupon">
+                                CUPOM123
+                            </div>
+                            <div class="coupon-value" id="coupon-value">
+                                R$ 0,00
+                            </div>
+                            <div class="coupon-validity">
+                                Válido até: <span id="coupon-expiry">31/12/2024</span>
+                            </div>
+                        </div>
+                        <div class="coupon-actions">
+                            <button class="btn btn-secondary" onclick="copyCoupon()">
+                                <i class="fas fa-copy"></i> Copiar Código
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="store-access">
+                        <h4>Acesse a Loja</h4>
+                        <p>Use seu cupom na loja oficial para resgatar seu bônus</p>
+                        <button class="btn btn-success btn-large" onclick="accessStore()">
+                            <i class="fas fa-store"></i> Acessar Loja
+                        </button>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="closeRedeemModal()">
+                            <i class="fas fa-check"></i> Concluir
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="loading" id="redeem-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Processando resgate...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nova Publicação -->
+    <div id="new-publication-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>
+                    Registrar Novo Conteúdo
+                </h3>
+                <button class="modal-close" onclick="closeNewPublicationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newPublicationForm">
+                    <div class="publication-form-grid">
+                        <div class="form-group">
+                            <label for="pub-tipo" class="form-label">Tipo de Conteúdo *</label>
+                            <select id="pub-tipo" name="tipo" class="form-control" required onchange="togglePublicationFields()">
+                                <option value="">Selecione o tipo</option>
+                                <option value="video">Vídeo</option>
+                                <option value="fotos">Fotos</option>
+                                <option value="live">Live</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campo específico para live -->
+                        <div id="pub-live-field" class="form-group" style="display: none;">
+                            <label for="pub-tempo-live" class="form-label">Tempo da Live (horas) *</label>
+                            <input type="number" id="pub-tempo-live" name="tempo-live" class="form-control" min="0" step="0.5" placeholder="Ex: 2.5">
+                        </div>
+                    </div>
+                    
+                    <!-- Seção específica para vídeo -->
+                    <div id="pub-video-fields" style="display: none;">
+                        <div class="alert alert-info" style="margin-bottom: 20px; padding: 16px; background: #e3f2fd; border: 1px solid #2196f3; border-radius: 12px; color: #1976d2;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <i class="fas fa-info-circle" style="font-size: 1.2em;"></i>
+                                <strong>Informações Importantes</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 0.95em; line-height: 1.4;">
+                                O vídeo só pode ser cadastrado após <strong>5 dias da postagem</strong> para nossa equipe analisar os resultados e métricas.
+                            </p>
+                        </div>
+                        
+                        <div class="video-info-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 16px 0; color: #374151; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-video" style="color: #6366f1;"></i>
+                                Dados do Vídeo
+                            </h4>
+                            
+                            <div class="video-fields-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label for="pub-visualizacoes" class="form-label">
+                                        <i class="fas fa-eye" style="margin-right: 6px; color: #6366f1;"></i>
+                                        Visualizações *
+                                    </label>
+                                    <input type="number" id="pub-visualizacoes" name="visualizacoes" class="form-control" min="0" placeholder="Ex: 1500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="pub-likes" class="form-label">
+                                        <i class="fas fa-heart" style="margin-right: 6px; color: #e53e3e;"></i>
+                                        Likes *
+                                    </label>
+                                    <input type="number" id="pub-likes" name="likes" class="form-control" min="0" placeholder="Ex: 120">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 16px;">
+                                <label for="pub-link-video" class="form-label">
+                                    <i class="fas fa-link" style="margin-right: 6px; color: #10b981;"></i>
+                                    Link do Vídeo *
+                                </label>
+                                <input type="url" id="pub-link-video" name="link-video" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                                <small class="form-help" style="color: #6b7280; font-size: 0.9em; margin-top: 4px; display: block;">
+                                    <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+                                    Cole aqui o link do seu vídeo no YouTube
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção específica para fotos -->
+                    <div id="pub-fotos-fields" style="display: none;">
+                        <div class="alert alert-warning" style="margin-bottom: 20px; padding: 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px; color: #856404;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 1.2em;"></i>
+                                <strong>Atenção Importante</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 0.95em; line-height: 1.4;">
+                                <strong>Fotos do Instagram</strong> devem ter colaboração com o <strong>Instagram da cidade</strong> para serem aprovadas.
+                            </p>
+                        </div>
+                        
+                        <div class="fotos-info-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 16px 0; color: #374151; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-camera" style="color: #e91e63;"></i>
+                                Dados da Foto
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label for="pub-link-foto" class="form-label">
+                                    <i class="fas fa-link" style="margin-right: 6px; color: #10b981;"></i>
+                                    Link da Foto *
+                                </label>
+                                <input type="url" id="pub-link-foto" name="link-foto" class="form-control" placeholder="https://www.instagram.com/p/...">
+                                <small class="form-help" style="color: #6b7280; font-size: 0.9em; margin-top: 4px; display: block;">
+                                    <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+                                    Cole aqui o link da sua foto no Instagram
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Área de Upload de Imagem -->
+                    <div class="form-group">
+                        <label class="form-label">Imagem do Conteúdo</label>
+                        <div class="publication-upload-area" id="publicationUploadArea">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="upload-text">Arraste uma imagem aqui ou clique para selecionar</div>
+                            <div class="upload-hint">PNG, JPG até 5MB • Use Ctrl+V para colar</div>
+                            <input type="file" id="publicationImageInput" accept="image/*" style="display: none;">
+                        </div>
+                        <img id="publicationImagePreview" class="preview-image" style="display: none;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pub-observacoes" class="form-label">Observações</label>
+                        <textarea id="pub-observacoes" name="observacoes" class="form-control" rows="3" placeholder="Adicione observações sobre o conteúdo..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeNewPublicationModal()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearPublicationForm()">
+                            <i class="fas fa-undo"></i> Limpar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Registrar Conteúdo
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="loading" id="publication-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Registrando conteúdo...</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal para Criar Cupom -->
+    <div id="create-cupom-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-ticket-alt"></i>
+                    Criar Cupom de Desconto
+                </h3>
+                <button class="modal-close" onclick="closeCreateCupomModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createCupomForm">
+                    <div class="form-group">
+                        <label for="cupom-nome">Nome do Cupom *</label>
+                        <input type="text" id="cupom-nome" name="nome" required 
+                               placeholder="Ex: CRIADOR10, DESCONTO20, etc." 
+                               pattern="[A-Za-z0-9]+" 
+                               title="Use apenas letras e números, sem espaços">
+                        <small class="form-help">Este cupom será usado para oferecer desconto aos seus seguidores</small>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeCreateCupomModal()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Criar Cupom
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="loading" id="cupom-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Criando cupom...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal para Editar Avatar -->
+    <div id="avatar-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-camera"></i>
+                    Editar Foto do Perfil
+                </h3>
+                <button class="modal-close" onclick="closeEditAvatar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="image-upload-area" id="avatarUploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Arraste uma nova foto aqui ou clique para selecionar</div>
+                    <div class="upload-hint">PNG, JPG até 2MB</div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                </div>
+                <img id="avatarPreview" class="preview-image" style="display: none;">
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeEditAvatar()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAvatar()" id="saveAvatarBtn" disabled>
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Saque -->
+    <div id="saque-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Solicitar Saque
+                </h3>
+                <button class="modal-close" onclick="closeSaqueModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="saque-form-section">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Valor disponível para saque:</strong> <span id="valor-saque-disponivel">R$ 0,00</span>
+                    </div>
+                    
+                    <form id="saqueForm">
+                        <div class="form-group">
+                            <label for="tipo-chave">Tipo de Chave PIX *</label>
+                            <select id="tipo-chave" name="tipo_chave" required>
+                                <option value="">Selecione o tipo de chave</option>
+                                <option value="cpf">CPF</option>
+                                <option value="cnpj">CNPJ</option>
+                                <option value="email">E-mail</option>
+                                <option value="telefone">Telefone</option>
+                                <option value="aleatoria">Chave Aleatória</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="chave-pix">Chave PIX *</label>
+                            <input type="text" id="chave-pix" name="chave_pix" required 
+                                   placeholder="Digite sua chave PIX">
+                            <small class="form-help">Certifique-se de que a chave PIX está correta</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nome-beneficiario">Nome do Beneficiário *</label>
+                            <input type="text" id="nome-beneficiario" name="nome_beneficiario" required 
+                                   placeholder="Nome completo do beneficiário">
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeSaqueModal()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-money-bill-wave"></i> Solicitar Saque
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="saque-success-section" style="display: none;">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Saque Solicitado com Sucesso!</h3>
+                        <p>Sua solicitação de saque foi registrada e será processada em até <strong>10 dias úteis</strong>.</p>
+                        <p>Você receberá uma confirmação por e-mail quando o pagamento for realizado.</p>
+                        <div class="saque-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Valor:</span>
+                                <span class="detail-value" id="saque-valor-confirmado">R$ 0,00</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Chave PIX:</span>
+                                <span class="detail-value" id="saque-chave-confirmada">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Beneficiário:</span>
+                                <span class="detail-value" id="saque-beneficiario-confirmado">-</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeSaqueModal()">
+                            <i class="fas fa-check"></i> Entendi
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="loading" id="saque-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Processando solicitação de saque...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="creator-dashboard.js"></script>
+</body>
+</html>

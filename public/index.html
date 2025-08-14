@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidade Alto Astral - Plataforma de Criadores</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Cidade Alto Astral</h1>
+                    <span>Plataforma de Criadores</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active" data-tab="cadastro">
+                    <i class="fas fa-star"></i>
+                    Cadastro
+                </a>
+                <a href="/creator-login.html" class="nav-link">
+                    <i class="fas fa-crown"></i>
+                    Área do Criador
+                </a>
+                <a href="/staff.html" class="nav-link" target="_blank">
+                    <i class="fas fa-cog"></i>
+                    Painel Staff
+                </a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Transforme sua <span class="gradient-text">Criatividade</span> em Sucesso
+                    </h1>
+                    <p class="hero-description">
+                        Junte-se à maior plataforma de criadores de conteúdo. Monetize suas lives, vídeos e fotos com nossa tecnologia avançada.
+                    </p>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-cards">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-video"></i>
+                            <span>Vídeos</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-camera"></i>
+                            <span>Fotos</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-broadcast-tower"></i>
+                            <span>Lives</span>
+                        </div>
+                    </div>
+                    <div class="hero-illustration">
+                        <div class="illustration-bg"></div>
+                        <div class="illustration-content">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="features-header">
+                <h2>Por que escolher o Bot Criador?</h2>
+                <p>Descubra as vantagens de fazer parte da nossa comunidade</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>Monetização Inteligente</h3>
+                    <p>Sistema avançado de bônus e recompensas baseado no seu desempenho e engajamento.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Analytics Detalhados</h3>
+                    <p>Acompanhe suas métricas em tempo real e otimize seu conteúdo para máximo alcance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Comunidade Ativa</h3>
+                    <p>Conecte-se com outros criadores e participe de eventos exclusivos da plataforma.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Segurança Total</h3>
+                    <p>Seus dados e pagamentos são protegidos com a mais alta tecnologia de segurança.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Tab Cadastro -->
+            <div id="cadastro-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2><i class="fas fa-rocket"></i> Comece sua Jornada</h2>
+                    <p>Selecione suas áreas de atuação e junte-se à nossa comunidade de criadores</p>
+                </div>
+
+                <!-- Seleção de Área -->
+                <div id="area-selection" class="section">
+                    <div class="section-title">
+                        <h3><i class="fas fa-palette"></i> Escolha suas Especialidades</h3>
+                        <p>Selecione uma ou mais áreas onde você quer brilhar como criador</p>
+                    </div>
+                    <div class="areas-grid" id="areas-grid">
+                        <!-- Áreas serão carregadas dinamicamente -->
+                    </div>
+                    <div class="continue-section">
+                        <button id="continue-button" class="btn btn-primary" onclick="showRegistrationForm()" style="display: none;">
+                            <i class="fas fa-rocket"></i> Continuar Jornada
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro -->
+                <div id="registration-form" class="section hidden">
+                    <div class="section-title">
+                        <h3><i class="fas fa-user-astronaut"></i> Complete seu Perfil</h3>
+                        <p>Preencha suas informações para criar sua conta de criador</p>
+                    </div>
+                    <form id="creator-form">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo *</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="discord_id">Discord ID *</label>
+                            <input type="text" id="discord_id" name="discord_id" required placeholder="Ex: 123456789012345678">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="game_id">ID do Jogo *</label>
+                            <input type="text" id="game_id" name="game_id" required placeholder="Digite seu ID do jogo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Senha *</label>
+                            <input type="password" id="password" name="password" required placeholder="Digite uma senha (mínimo 6 caracteres)" minlength="6">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirmar Senha *</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirme sua senha">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Áreas Selecionadas</label>
+                            <div class="selected-areas" id="selected-area-display">
+                                <!-- Áreas selecionadas serão exibidas aqui -->
+                            </div>
+                        </div>
+
+                        <div id="questions-section">
+                            <!-- Perguntas específicas da área serão carregadas aqui -->
+                        </div>
+                        
+                        <!-- Área de upload de imagem -->
+                        <div class="form-group">
+                            <label>Print do seu perfil *</label>
+                            <div class="image-upload-area" id="image-upload-area">
+                                <div class="upload-placeholder" id="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Arraste e solte uma imagem aqui</p>
+                                    <p>ou use <strong>Ctrl+V</strong> para colar um screenshot</p>
+                                </div>
+                                <div class="uploaded-image hidden" id="uploaded-image">
+                                    <img id="preview-image" src="" alt="Preview">
+                                    <button type="button" class="remove-image" onclick="removeImage()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <input type="file" id="file-input" accept="image/*" hidden>
+                                <input type="hidden" id="image-data" name="profile_image">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="voltarSelecao()">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-rocket"></i> Lançar Carreira
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resultado do Cadastro -->
+                <div id="registration-result" class="section hidden">
+                    <div class="result-content">
+                        <div class="result-icon">
+                            <div class="success-animation">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                        </div>
+                        <h3>Bem-vindo à equipe de criadores da Cidade Alto Astral!</h3>
+                        <p>Seu cadastro foi enviado com sucesso e está sendo analisado pela nossa equipe.</p>
+                        <p>Em breve você receberá uma DM no Discord com a confirmação da aprovação.</p>
+                        <button class="btn btn-primary" onclick="resetForm()">
+                            <i class="fas fa-user-plus"></i> Cadastrar Outro Criador
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-rocket"></i>
+                        <span>Bot Criador</span>
+                    </div>
+                    <p>A plataforma que transforma criadores em sucessos digitais.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#cadastro">Cadastro</a></li>
+                        <li><a href="/creator-login.html">Área do Criador</a></li>
+                        <li><a href="/staff.html">Painel Staff</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/cidadealtoastral" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="https://www.instagram.com/cidadealtoastral/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@cidadealtoastral" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Cidade Alto Astral. Todos os direitos reservados.</p>
+            </div>
+        </footer>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

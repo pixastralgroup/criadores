@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Login Admin</title>
+</head>
+<body>
+    <h1>Teste de Login Admin</h1>
+    <form id="loginForm">
+        <div>
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" value="admin" required>
+        </div>
+        <div>
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" value="admin123" required>
+        </div>
+        <button type="submit">Testar Login</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                console.log('Tentando login com:', { username, password });
+                
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                console.log('Resposta:', result);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <h3>✅ Login bem-sucedido!</h3>
+                        <p><strong>Token:</strong> ${result.token.substring(0, 50)}...</p>
+                        <p><strong>Usuário:</strong> ${result.user.nome}</p>
+                        <p><strong>Nível:</strong> ${result.user.nivel}</p>
+                    `;
+                    
+                    // Testar verificação do token
+                    const verifyResponse = await fetch('/api/admin/verify', {
+                        headers: {
+                            'Authorization': `Bearer ${result.token}`
+                        }
+                    });
+                    
+                    if (verifyResponse.ok) {
+                        const verifyResult = await verifyResponse.json();
+                        resultDiv.innerHTML += `
+                            <h3>✅ Verificação do token bem-sucedida!</h3>
+                            <p><strong>Usuário verificado:</strong> ${verifyResult.user.username}</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML += `
+                            <h3>❌ Erro na verificação do token</h3>
+                            <p>Status: ${verifyResponse.status}</p>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3>❌ Erro no login</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Erro:</strong> ${result.error}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                resultDiv.innerHTML = `
+                    <h3>❌ Erro de conexão</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

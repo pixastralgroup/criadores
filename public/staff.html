@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidade Alto Astral - Painel Staff</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="staff.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos para coluna de metas */
+        .creators-table td:nth-child(8) {
+            font-size: 0.8rem;
+            line-height: 1.3;
+            max-width: 120px;
+        }
+        
+        .text-muted {
+            color: #999 !important;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Painel Administrativo</h1>
+            </div>
+            <div class="user-info" id="user-info">
+                <!-- Informações do usuário serão carregadas aqui -->
+            </div>
+            <div class="connection-status" id="connection-status">
+                <i class="fas fa-circle"></i>
+                <span id="connection-text">Conectando...</span>
+            </div>
+        </header>
+
+        <!-- Login Form -->
+        <div id="login-section" class="login-section">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-lock"></i>
+                    <h2>Acesso Staff</h2>
+                    <p>Faça login para acessar o painel de aprovação</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Usuário</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Entrar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard hidden">
+            <!-- Navegação -->
+            <div class="admin-nav">
+                <button class="nav-btn active" data-tab="criadores" onclick="switchTab('criadores')">
+                    <i class="fas fa-users"></i> Gerenciar Criadores
+                </button>
+                <button class="nav-btn" data-tab="contratados" onclick="switchTab('contratados')">
+                    <i class="fas fa-user-tie"></i> Contratados
+                </button>
+                <button class="nav-btn" data-tab="pagamentos" onclick="switchTab('pagamentos')">
+                    <i class="fas fa-money-bill-wave"></i> Pagamentos
+                </button>
+                <button class="nav-btn" data-tab="admins" onclick="switchTab('admins')" style="display: none;">
+                    <i class="fas fa-user-shield"></i> Gerenciar Admins
+                </button>
+                <button class="nav-btn" data-tab="logs" onclick="switchTab('logs')">
+                    <i class="fas fa-history"></i> Logs do Sistema
+                </button>
+            </div>
+
+            <!-- Tab Criadores -->
+            <div id="criadores-tab" class="tab-content active">
+                <!-- Estatísticas -->
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="total-criadores">0</h3>
+                                <p>Total de Criadores</p>
+                            </div>
+                        </div>
+                        <div class="stat-card pending">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="pendentes">0</h3>
+                                <p>Aguardando Aprovação</p>
+                            </div>
+                        </div>
+                        <div class="stat-card approved">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="aprovados">0</h3>
+                                <p>Aprovados</p>
+                            </div>
+                        </div>
+                        <div class="stat-card rejected">
+                            <div class="stat-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="rejeitados">0</h3>
+                                <p>Rejeitados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label for="status-filter">Filtrar por Status:</label>
+                        <select id="status-filter">
+                            <option value="">Todos</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="aprovado">Aprovados</option>
+                            <option value="rejeitado">Rejeitados</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="search-input">Buscar:</label>
+                        <input type="text" id="search-input" placeholder="Nome, Discord ID ou ID do Jogo...">
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-refresh"></i> Atualizar
+                    </button>
+                </div>
+
+                <!-- Lista de Criadores -->
+                <div class="creators-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-list"></i> Lista de Criadores</h3>
+                        <div class="header-actions">
+                            <button class="btn btn-secondary" onclick="refreshData()" title="Atualizar dados manualmente">
+                                <i class="fas fa-sync-alt"></i> Atualizar
+                            </button>
+                            <a href="/staff-content.html" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-list"></i> Gerenciar Conteúdos
+                            </a>
+                        </div>
+                    </div>
+                    <div class="creators-table-container">
+                        <table class="creators-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="nome">
+                                        Nome <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="discord_id">
+                                        Discord ID <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="game_id">
+                                        ID do Jogo <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="area">
+                                        Área <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="cupom">
+                                        Cupom <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="vendas">
+                                        Vendas Cupom <i class="fas fa-sort"></i>
+                                    </th>
+                                                                         <th class="sortable" data-sort="indicados">
+                                         Indicações <i class="fas fa-sort"></i>
+                                     </th>
+                                     <th class="sortable" data-sort="metas">
+                                         Metas <i class="fas fa-sort"></i>
+                                     </th>
+                                     <th class="sortable" data-sort="contratado">
+                                         Contratado <i class="fas fa-sort"></i>
+                                     </th>
+                                     <th class="sortable" data-sort="status">
+                                         Status <i class="fas fa-sort"></i>
+                                     </th>
+                                     <th class="sortable" data-sort="data">
+                                         Data <i class="fas fa-sort"></i>
+                                     </th>
+                                     <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="creators-tbody">
+                                <!-- Criadores serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Contratados -->
+            <div id="contratados-tab" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-tie"></i> Gerenciamento de Contratados</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openNewContratadoModal()">
+                            <i class="fas fa-plus"></i> Novo Contratado
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshContratados()">
+                            <i class="fas fa-refresh"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estatísticas dos Contratados -->
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="total-contratados">0</h3>
+                                <p>Total de Contratados</p>
+                            </div>
+                        </div>
+                        <div class="stat-card active">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="contratados-ativos">0</h3>
+                                <p>Ativos</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card pending">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="contratados-pendentes">R$ 0,00</h3>
+                                <p>Total de Ganhos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros dos Contratados -->
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label for="contratado-status-filter">Filtrar por Status:</label>
+                        <select id="contratado-status-filter">
+                            <option value="">Todos</option>
+                            <option value="ativo">Ativos</option>
+                            <option value="pendente">Pendentes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="contratado-search-input">Buscar:</label>
+                        <input type="text" id="contratado-search-input" placeholder="Nome, função ou departamento...">
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshContratados()">
+                        <i class="fas fa-refresh"></i> Atualizar
+                    </button>
+                </div>
+
+                <!-- Lista de Contratados -->
+                <div class="contratados-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-list"></i> Lista de Contratados</h3>
+                    </div>
+                    <div class="contratados-table-container">
+                        <table class="contratados-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="game_id">
+                                        ID <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="nome">
+                                        Nome do Criador <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="areas">
+                                        Categorias <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="progress">
+                                        Progresso da Meta <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="indicados">
+                                        Indicados <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="valor_receber">
+                                        Valor a Receber <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contratados-tbody">
+                                <!-- Contratados serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Pagamentos -->
+            <div id="pagamentos-tab" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-money-bill-wave"></i> Gerenciamento de Pagamentos</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="refreshPagamentos()">
+                            <i class="fas fa-refresh"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estatísticas de Pagamentos -->
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card pending">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="saques-pendentes">0</h3>
+                                <p>Solicitações Pendentes</p>
+                            </div>
+                        </div>
+                        <div class="stat-card approved">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="saques-aprovados">0</h3>
+                                <p>Solicitações Aprovadas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="saques-pagos">0</h3>
+                                <p>Pagamentos Realizados</p>
+                            </div>
+                        </div>
+                        <div class="stat-card rejected">
+                            <div class="stat-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="saques-rejeitados">0</h3>
+                                <p>Solicitações Rejeitadas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros de Pagamentos -->
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label for="saque-status-filter">Filtrar por Status:</label>
+                        <select id="saque-status-filter">
+                            <option value="">Todos</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="aprovado">Aprovados</option>
+                            <option value="pago">Pagos</option>
+                            <option value="rejeitado">Rejeitados</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="saque-search-input">Buscar:</label>
+                        <input type="text" id="saque-search-input" placeholder="Nome do criador...">
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshPagamentos()">
+                        <i class="fas fa-refresh"></i> Atualizar
+                    </button>
+                </div>
+
+                <!-- Lista de Solicitações de Saque -->
+                <div class="pagamentos-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-list"></i> Solicitações de Saque</h3>
+                    </div>
+                    <div class="pagamentos-table-container">
+                        <table class="pagamentos-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="criador">
+                                        Criador <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="valor">
+                                        Valor <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="tipo_chave">
+                                        Tipo de Chave <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="chave_pix">
+                                        Chave PIX <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="beneficiario">
+                                        Beneficiário <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="status">
+                                        Status <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="data_solicitacao">
+                                        Data Solicitação <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagamentos-tbody">
+                                <!-- Solicitações de saque serão carregadas aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Admins -->
+            <div id="admins-tab" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-shield"></i> Gerenciamento de Administradores</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openNewAdminModal()">
+                            <i class="fas fa-plus"></i> Novo Admin
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshAdmins()">
+                            <i class="fas fa-refresh"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admins-table-container">
+                    <table class="admins-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Usuário</th>
+                                <th>Email</th>
+                                <th>Nível</th>
+                                <th>Status</th>
+                                <th>Último Login</th>
+                                <th>Criado em</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admins-tbody">
+                            <!-- Admins serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Logs -->
+            <div id="logs-tab" class="tab-content">
+                <div class="tab-header">
+                    <h2>Logs Administrativos</h2>
+                    <div class="tab-actions">
+                        <button class="btn btn-secondary" onclick="refreshLogs()">
+                            <i class="fas fa-sync-alt"></i>
+                            Atualizar
+                        </button>
+                        <button class="btn btn-primary" onclick="createTestLog()">
+                            <i class="fas fa-plus"></i>
+                            Criar Log de Teste
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros de Logs -->
+                <div class="logs-filters">
+                    <div class="filter-group">
+                        <label for="log-admin">Admin:</label>
+                        <select id="log-admin">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="log-action">Ação:</label>
+                        <select id="log-action">
+                            <option value="">Todas</option>
+                            <option value="UPDATE_XP">Atualizar XP</option>
+                            <option value="UPDATE_LEVEL">Atualizar Nível</option>
+                            <option value="UPDATE_BONUS">Atualizar Bônus</option>
+                            <option value="UPDATE_LAST_LEVEL_UP">Atualizar Data Up</option>
+                            <option value="DELETE_COUPON">Deletar Cupom</option>
+                            <option value="UPDATE_COUPON">Atualizar Cupom</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="log-table">Tabela:</label>
+                        <select id="log-table">
+                            <option value="">Todas</option>
+                            <option value="criadores">Criadores</option>
+                            <option value="staff">Staff</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="log-date-start">Data Início:</label>
+                        <input type="date" id="log-date-start">
+                    </div>
+                    <div class="filter-group">
+                        <label for="log-date-end">Data Fim:</label>
+                        <input type="date" id="log-date-end">
+                    </div>
+                    <button class="btn btn-primary" onclick="applyLogFilters()">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+
+                <div class="logs-table-container">
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Admin</th>
+                                <th>Ação</th>
+                                <th>Tabela</th>
+                                <th>Registro ID</th>
+                                <th>Dados Anteriores</th>
+                                <th>Dados Novos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                            <!-- Logs serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Detalhes -->
+        <div id="creator-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Detalhes do Criador</h3>
+                    <button class="modal-close" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Conteúdo do modal será carregado aqui -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Edição de Criador -->
+        <div id="creator-edit-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Editar Criador</h3>
+                    <button class="modal-close" onclick="closeCreatorEditModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="creator-edit-form">
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" id="edit-nome" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Nível:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('nivel')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-nivel" class="field-display"></span>
+                                <input type="number" id="edit-nivel" name="edit-nivel" min="1" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Bônus:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('bonus')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-bonus" class="field-display"></span>
+                                <input type="number" id="edit-bonus" name="edit-bonus" min="0" step="0.01" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Data Último Up:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('ultimo-up')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-ultimo-up" class="field-display"></span>
+                                <input type="datetime-local" id="edit-ultimo-up" name="edit-ultimo-up" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Cupom Atual:</label>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-cupom-atual" class="field-display"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Novo Cupom:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('cupom-novo')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-cupom-novo" class="field-display">Clique no lápis para editar</span>
+                                <input type="text" id="edit-cupom-novo" name="edit-cupom-novo" placeholder="Digite o novo nome do cupom" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Email:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('email')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-email" class="field-display"></span>
+                                <input type="email" id="edit-email" name="edit-email" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Discord ID:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('discord')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-discord" class="field-display"></span>
+                                <input type="text" id="edit-discord" name="edit-discord" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Áreas:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('areas')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-areas" class="field-display"></span>
+                                <div id="edit-areas-container" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header">
+                                <label>Status da Conta:</label>
+                                <button type="button" class="edit-btn" onclick="toggleFieldEdit('status')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div class="field-content">
+                                <span id="display-status" class="field-display"></span>
+                                <select id="edit-status" name="edit-status" style="display: none;">
+                                    <option value="pendente">Cadastro em Análise</option>
+                                    <option value="aprovado">Aprovado</option>
+                                    <option value="suspenso">Conta Suspensa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-danger" onclick="deleteCreatorCoupon()">
+                                <i class="fas fa-trash"></i> Deletar Cupom
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+                 <!-- Modal de Novo Admin -->
+         <div id="new-admin-modal" class="modal hidden">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h3>Novo Administrador</h3>
+                     <button class="modal-close" onclick="closeNewAdminModal()">
+                         <i class="fas fa-times"></i>
+                     </button>
+                 </div>
+                 <div class="modal-body">
+                     <form id="new-admin-form">
+                         <div class="form-group">
+                             <label for="new-admin-username">Usuário:</label>
+                             <input type="text" id="new-admin-username" name="new-admin-username" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="new-admin-password">Senha:</label>
+                             <input type="password" id="new-admin-password" name="new-admin-password" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="new-admin-nome">Nome:</label>
+                             <input type="text" id="new-admin-nome" name="new-admin-nome" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="new-admin-email">Email:</label>
+                             <input type="email" id="new-admin-email" name="new-admin-email" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="new-admin-nivel">Nível:</label>
+                             <select id="new-admin-nivel" name="new-admin-nivel" required>
+                                 <option value="admin">Admin</option>
+                                 <option value="super_admin">Super Admin</option>
+                             </select>
+                         </div>
+                         <div class="form-actions">
+                             <button type="submit" class="btn btn-primary">
+                                 <i class="fas fa-plus"></i> Criar Admin
+                             </button>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+
+         <!-- Modal de Novo Contratado -->
+         <div id="new-contratado-modal" class="modal hidden">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h3><i class="fas fa-user-tie"></i> Novo Contratado</h3>
+                     <button class="modal-close" onclick="closeNewContratadoModal()">
+                         <i class="fas fa-times"></i>
+                     </button>
+                 </div>
+                 <div class="modal-body">
+                     <form id="new-contratado-form">
+                         <!-- Seleção do Criador -->
+                         <div class="form-group">
+                             <label for="contratado-criador">Selecionar Criador:</label>
+                             <select id="contratado-criador" name="contratado-criador" required onchange="loadCriadorAreas()">
+                                 <option value="">Escolha um criador...</option>
+                             </select>
+                             <small class="form-help">Selecione o criador que deseja contratar</small>
+                         </div>
+
+                                                   <!-- Áreas do Criador (será preenchido dinamicamente) -->
+                          <div class="form-group" id="criador-areas-section" style="display: none;">
+                              <label>Áreas do Criador:</label>
+                              <div id="criador-areas-display" class="areas-display">
+                                  <!-- Áreas serão carregadas aqui -->
+                              </div>
+                          </div>
+
+                          <!-- Metas das Áreas (será preenchido dinamicamente) -->
+                          <div class="form-group" id="criador-metas-section" style="display: none;">
+                              <label>Metas das Áreas:</label>
+                              <div id="criador-metas-display" class="metas-display">
+                                  <!-- Metas serão carregadas aqui -->
+                              </div>
+                          </div>
+
+                         <!-- Valores do Contrato -->
+                         <div class="contract-values-section">
+                             <h4><i class="fas fa-file-contract"></i> Valores do Contrato</h4>
+                             
+                             <div class="form-group">
+                                 <label for="valor-hora-live">Valor por Hora de Live (R$):</label>
+                                 <input type="number" id="valor-hora-live" name="valor-hora-live" min="0" step="0.01" value="0.00" required>
+                                 <small class="form-help">Valor pago por cada hora de live</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="valor-10k-visualizacao">Valor para cada 10k de Visualização no Vídeo (R$):</label>
+                                 <input type="number" id="valor-10k-visualizacao" name="valor-10k-visualizacao" min="0" step="0.01" value="0.00" required>
+                                 <small class="form-help">Valor pago a cada 10.000 visualizações</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="valor-indicacao">Valor por Indicação (R$):</label>
+                                 <input type="number" id="valor-indicacao" name="valor-indicacao" min="0" step="0.01" value="0.00" required>
+                                 <small class="form-help">Valor pago por cada indicação</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="percentual-cupom">% do que foi Vendido no Cupom (%):</label>
+                                 <input type="number" id="percentual-cupom" name="percentual-cupom" min="0" max="100" step="0.01" value="0.00" required>
+                                 <small class="form-help">Percentual sobre as vendas do cupom</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="limite-ganhos">Limite de Ganhos (R$):</label>
+                                 <input type="number" id="limite-ganhos" name="limite-ganhos" min="0" step="0.01" value="0.00" required>
+                                 <small class="form-help">Limite máximo de ganhos (0 = sem limite)</small>
+                             </div>
+                         </div>
+
+                         <!-- Valores de Bônus -->
+                         <div class="bonus-values-section">
+                             <h4><i class="fas fa-gift"></i> Valores de Bônus</h4>
+                             
+                             <div class="form-group">
+                                 <label for="bonus-hora-live">Bônus por Hora de Live (R$):</label>
+                                 <input type="number" id="bonus-hora-live" name="bonus-hora-live" min="0" step="0.01" value="5.00" required>
+                                 <small class="form-help">Bônus padrão por hora de live</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="bonus-foto">Bônus por Foto (R$):</label>
+                                 <input type="number" id="bonus-foto" name="bonus-foto" min="0" step="0.01" value="7.00" required>
+                                 <small class="form-help">Bônus padrão por foto</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="bonus-video">Bônus por Vídeo (R$):</label>
+                                 <input type="number" id="bonus-video" name="bonus-video" min="0" step="0.01" value="10.00" required>
+                                 <small class="form-help">Bônus padrão por vídeo</small>
+                             </div>
+                         </div>
+
+                         <div class="form-actions">
+                             <button type="button" class="btn btn-secondary" onclick="closeNewContratadoModal()">
+                                 <i class="fas fa-times"></i> Cancelar
+                             </button>
+                             <button type="submit" class="btn btn-primary">
+                                 <i class="fas fa-user-tie"></i> Contratar Criador
+                             </button>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+
+         <!-- Modal de Edição de Contratado -->
+         <div id="edit-contratado-modal" class="modal hidden">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h3><i class="fas fa-edit"></i> Editar Contratado</h3>
+                     <button class="modal-close" onclick="closeEditContratadoModal()">
+                         <i class="fas fa-times"></i>
+                     </button>
+                 </div>
+                 <div class="modal-body">
+                     <form id="edit-contratado-form">
+                         <input type="hidden" id="edit-contratado-id" name="contratado-id">
+                         
+                         <!-- Informações do Criador (somente leitura) -->
+                         <div class="form-group">
+                             <label>Criador:</label>
+                             <input type="text" id="edit-contratado-criador" readonly>
+                             <small class="form-help">Criador selecionado (não pode ser alterado)</small>
+                         </div>
+
+                         <!-- Áreas do Criador (editável) -->
+                         <div class="form-group" id="edit-criador-areas-section">
+                             <label>Áreas do Criador:</label>
+                             <div class="areas-selection">
+                                 <div id="edit-criador-areas-display" class="areas-display">
+                                     <!-- Áreas atuais serão carregadas aqui -->
+                                 </div>
+                                 <div class="areas-edit-controls">
+                                     <button type="button" class="btn btn-sm btn-secondary" onclick="openEditContratadoAreas()">
+                                         <i class="fas fa-edit"></i> Editar Áreas
+                                     </button>
+                                 </div>
+                             </div>
+                             
+                             <!-- Modal de Edição de Áreas -->
+                             <div id="edit-contratado-areas-modal" class="modal hidden">
+                                 <div class="modal-content">
+                                     <div class="modal-header">
+                                         <h3><i class="fas fa-tags"></i> Editar Áreas do Criador</h3>
+                                         <button class="modal-close" onclick="closeEditContratadoAreasModal()">
+                                             <i class="fas fa-times"></i>
+                                         </button>
+                                     </div>
+                                     <div class="modal-body">
+                                         <div class="areas-grid-edit" id="edit-contratado-areas-grid">
+                                             <!-- Áreas serão carregadas aqui -->
+                                         </div>
+                                         <div class="form-actions">
+                                             <button type="button" class="btn btn-secondary" onclick="closeEditContratadoAreasModal()">
+                                                 <i class="fas fa-times"></i> Cancelar
+                                             </button>
+                                             <button type="button" class="btn btn-primary" onclick="saveEditContratadoAreas()">
+                                                 <i class="fas fa-save"></i> Salvar Áreas
+                                             </button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <!-- Metas das Áreas -->
+                         <div class="form-group" id="edit-criador-metas-section">
+                             <label>Metas das Áreas:</label>
+                             <div id="edit-criador-metas-display" class="metas-display">
+                                 <!-- Metas serão carregadas aqui -->
+                             </div>
+                         </div>
+
+                         <!-- Valores do Contrato -->
+                         <div class="contract-values-section">
+                             <h4><i class="fas fa-file-contract"></i> Valores do Contrato</h4>
+                             
+                             <div class="form-group">
+                                 <label for="edit-valor-hora-live">Valor por Hora de Live (R$):</label>
+                                 <input type="number" id="edit-valor-hora-live" name="valor-hora-live" min="0" step="0.01" required>
+                                 <small class="form-help">Valor pago por cada hora de live</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-valor-10k-visualizacao">Valor para cada 10k de Visualização no Vídeo (R$):</label>
+                                 <input type="number" id="edit-valor-10k-visualizacao" name="valor-10k-visualizacao" min="0" step="0.01" required>
+                                 <small class="form-help">Valor pago a cada 10.000 visualizações</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-valor-indicacao">Valor por Indicação (R$):</label>
+                                 <input type="number" id="edit-valor-indicacao" name="valor-indicacao" min="0" step="0.01" required>
+                                 <small class="form-help">Valor pago por cada indicação</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-percentual-cupom">% do que foi Vendido no Cupom (%):</label>
+                                 <input type="number" id="edit-percentual-cupom" name="percentual-cupom" min="0" max="100" step="0.01" required>
+                                 <small class="form-help">Percentual sobre as vendas do cupom</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-limite-ganhos">Limite de Ganhos (R$):</label>
+                                 <input type="number" id="edit-limite-ganhos" name="limite-ganhos" min="0" step="0.01" required>
+                                 <small class="form-help">Limite máximo de ganhos (0 = sem limite)</small>
+                             </div>
+                         </div>
+
+                         <!-- Valores de Bônus -->
+                         <div class="bonus-values-section">
+                             <h4><i class="fas fa-gift"></i> Valores de Bônus</h4>
+                             
+                             <div class="form-group">
+                                 <label for="edit-bonus-hora-live">Bônus por Hora de Live (R$):</label>
+                                 <input type="number" id="edit-bonus-hora-live" name="bonus-hora-live" min="0" step="0.01" required>
+                                 <small class="form-help">Bônus padrão por hora de live</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-bonus-foto">Bônus por Foto (R$):</label>
+                                 <input type="number" id="edit-bonus-foto" name="bonus-foto" min="0" step="0.01" required>
+                                 <small class="form-help">Bônus padrão por foto</small>
+                             </div>
+
+                             <div class="form-group">
+                                 <label for="edit-bonus-video">Bônus por Vídeo (R$):</label>
+                                 <input type="number" id="edit-bonus-video" name="bonus-video" min="0" step="0.01" required>
+                                 <small class="form-help">Bônus padrão por vídeo</small>
+                             </div>
+                         </div>
+
+                         <div class="form-actions">
+                             <button type="button" class="btn btn-secondary" onclick="closeEditContratadoModal()">
+                                 <i class="fas fa-times"></i> Cancelar
+                             </button>
+                             <button type="submit" class="btn btn-primary">
+                                 <i class="fas fa-save"></i> Salvar Alterações
+                             </button>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+
+        <!-- Modal de Detalhes do Saque -->
+        <div id="saque-details-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-money-bill-wave"></i> Detalhes da Solicitação de Saque</h3>
+                    <button class="modal-close" onclick="closeSaqueDetailsModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="saque-details-content">
+                        <!-- Conteúdo será carregado dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="staff.js"></script>
+</body>
+</html> 

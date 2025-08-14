@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Ctrl+V</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 200px;
+        }
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .preview {
+            max-width: 300px;
+            margin: 20px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste de Ctrl+V para Imagens</h1>
+    
+    <div class="upload-area" id="upload-area">
+        <p>Arraste e solte uma imagem aqui</p>
+        <p>ou use <strong>Ctrl+V</strong> para colar um screenshot</p>
+        <p>ou clique para selecionar um arquivo</p>
+    </div>
+    
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+    
+    <div id="preview-container"></div>
+    
+    <div class="log" id="log"></div>
+    
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            console.log(message);
+        }
+        
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        
+        log('Inicializando teste de upload...');
+        
+        // Click para selecionar arquivo
+        uploadArea.addEventListener('click', () => {
+            log('Upload area clicada');
+            fileInput.click();
+        });
+        
+        // Mudança no input de arquivo
+        fileInput.addEventListener('change', (e) => {
+            log('Arquivo selecionado via input');
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processImage(file);
+            }
+        });
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+            log('Drag over detectado');
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            log('Drag leave detectado');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            log('Drop detectado');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                processImage(files[0]);
+            }
+        });
+        
+        // Paste do clipboard
+        document.addEventListener('paste', (e) => {
+            log('Paste event detectado');
+            log('Clipboard items: ' + e.clipboardData.items.length);
+            
+            const items = e.clipboardData.items;
+            for (let item of items) {
+                log('Item type: ' + item.type);
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    log('Imagem encontrada no clipboard: ' + file.name + ' (' + file.size + ' bytes)');
+                    processImage(file);
+                    break;
+                }
+            }
+        });
+        
+        function processImage(file) {
+            log('Processando imagem: ' + file.name);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                displayImage(imageData);
+                log('Imagem processada com sucesso');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function displayImage(imageData) {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = `
+                <h3>Imagem carregada:</h3>
+                <img src="${imageData}" alt="Preview" class="preview">
+            `;
+        }
+        
+        log('Teste inicializado. Tente colar uma imagem com Ctrl+V!');
+    </script>
+</body>
+</html> 

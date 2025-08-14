@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Servidor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Teste do Servidor</h1>
+    
+    <div class="test-section">
+        <h2>1. Teste de Conectividade Básica</h2>
+        <button onclick="testBasicConnection()">Testar Conexão</button>
+        <div id="basic-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Teste das Áreas</h2>
+        <button onclick="testAreas()">Testar Endpoint de Áreas</button>
+        <div id="areas-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Teste do Cadastro (Simulado)</h2>
+        <button onclick="testCadastro()">Testar Endpoint de Cadastro</button>
+        <div id="cadastro-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Logs do Console</h2>
+        <button onclick="clearLogs()">Limpar Logs</button>
+        <div id="logs"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        async function testBasicConnection() {
+            const resultDiv = document.getElementById('basic-result');
+            resultDiv.innerHTML = '<p class="info">Testando...</p>';
+            
+            try {
+                log('Iniciando teste de conectividade básica...');
+                const response = await fetch('/');
+                const text = await response.text();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '<p class="success">✅ Servidor respondendo corretamente</p>';
+                    log('✅ Servidor respondendo corretamente', 'success');
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Erro ${response.status}: ${response.statusText}</p>`;
+                    log(`❌ Erro ${response.status}: ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Erro de conexão: ${error.message}</p>`;
+                log(`❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAreas() {
+            const resultDiv = document.getElementById('areas-result');
+            resultDiv.innerHTML = '<p class="info">Testando...</p>';
+            
+            try {
+                log('Iniciando teste do endpoint de áreas...');
+                const response = await fetch('/api/creators/areas');
+                const contentType = response.headers.get('content-type');
+                
+                log(`Content-Type da resposta: ${contentType}`, 'info');
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `<p class="error">❌ Resposta não é JSON: ${text.substring(0, 200)}...</p>`;
+                    log(`❌ Resposta não é JSON: ${text.substring(0, 200)}...`, 'error');
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p class="success">✅ Áreas carregadas: ${data.length} encontradas</p>
+                                          <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log(`✅ Áreas carregadas: ${data.length} encontradas`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Erro ${response.status}: ${data.error || 'Erro desconhecido'}</p>`;
+                    log(`❌ Erro ${response.status}: ${data.error || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Erro: ${error.message}</p>`;
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCadastro() {
+            const resultDiv = document.getElementById('cadastro-result');
+            resultDiv.innerHTML = '<p class="info">Testando...</p>';
+            
+            try {
+                log('Iniciando teste do endpoint de cadastro...');
+                
+                const testData = {
+                    nome: 'Teste',
+                    email: 'teste@teste.com',
+                    telefone: '11999999999',
+                    discord_id: '123456789012345678',
+                    game_id: 'TESTE123',
+                    password: '123456',
+                    areas_ids: [1],
+                    respostas: [],
+                    profile_image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+                    cupom_desconto: 'TESTE123'
+                };
+                
+                const response = await fetch('/api/creators/cadastro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const contentType = response.headers.get('content-type');
+                log(`Content-Type da resposta: ${contentType}`, 'info');
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `<p class="error">❌ Resposta não é JSON: ${text.substring(0, 200)}...</p>`;
+                    log(`❌ Resposta não é JSON: ${text.substring(0, 200)}...`, 'error');
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p class="success">✅ Cadastro funcionando (teste simulado)</p>
+                                          <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log('✅ Cadastro funcionando (teste simulado)', 'success');
+                } else {
+                    resultDiv.innerHTML = `<p class="info">ℹ️ Resposta esperada (erro de validação): ${data.error || 'Erro desconhecido'}</p>
+                                          <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log(`ℹ️ Resposta esperada (erro de validação): ${data.error || 'Erro desconhecido'}`, 'info');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Erro: ${error.message}</p>`;
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste automático ao carregar a página
+        window.addEventListener('load', () => {
+            log('Página carregada. Iniciando testes automáticos...');
+            setTimeout(testBasicConnection, 1000);
+            setTimeout(testAreas, 2000);
+        });
+    </script>
+</body>
+</html> 
