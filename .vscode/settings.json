@@ -1,0 +1,32 @@
+{
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false
+  },
+  "github.copilot.advanced": {
+    "secret_key": "claude-4",
+    "model": "claude-4",
+    "engine": "claude-4"
+  },
+  "github.copilot.chat.model": "claude-4",
+  "github.copilot.completion.model": "claude-4",
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.preferences": {
+    "model": "claude-4",
+    "enhancement": true,
+    "contextAware": true
+  },
+  "files.associations": {
+    "*.js": "javascript",
+    "*.json": "json",
+    "*.md": "markdown"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  }
+}

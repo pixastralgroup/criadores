@@ -1,0 +1,40 @@
+# GitHub Copilot Configuration
+# Configuração do GitHub Copilot para usar Claude 4
+
+model_preference:
+  # Preferência de modelo AI para sugestões de código
+  primary_model: "claude-4"
+  fallback_model: "claude-3.5-sonnet"
+
+# Configurações de comportamento
+behavior:
+  # Ativar sugestões avançadas
+  enhanced_suggestions: true
+  # Usar contexto completo do projeto
+  full_context: true
+  # Ativar sugestões multi-linha
+  multiline_suggestions: true
+
+# Configurações específicas por linguagem
+language_settings:
+  javascript:
+    model: "claude-4"
+    context_lines: 50
+  typescript:
+    model: "claude-4"
+    context_lines: 50
+  json:
+    model: "claude-4"
+    context_lines: 30
+  markdown:
+    model: "claude-4"
+    context_lines: 20
+
+# Configurações avançadas
+advanced:
+  # Usar Claude 4 para análise de código
+  code_analysis: "claude-4"
+  # Usar Claude 4 para documentação
+  documentation: "claude-4"
+  # Usar Claude 4 para refatoração
+  refactoring: "claude-4"
