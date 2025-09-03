@@ -2,6 +2,36 @@
 
 Um sistema completo para cadastro de criadores com painel de aprovação para staff.
 
+## 🤖 Configuração Claude 4 - GitHub Copilot
+
+**NOVO!** Este projeto agora está configurado para usar **Claude 4** ao invés do Claude 3.5 no GitHub Copilot!
+
+### ✅ Configuração Ativa:
+- **Modelo Principal**: Claude 4
+- **Modelo Fallback**: Claude 3.5 Sonnet  
+- **Configurações Avançadas**: Habilitadas
+- **Contexto Completo**: Ativo para melhor compreensão do código
+
+### 🚀 Como Usar:
+1. Instale a extensão do GitHub Copilot no VS Code
+2. Abra o projeto no VS Code
+3. As configurações do Claude 4 serão carregadas automaticamente
+4. Teste as sugestões avançadas em `test-claude-4.js`
+
+### 📁 Arquivos de Configuração:
+- `.github/copilot/copilot.yml` - Configuração principal do Copilot
+- `.vscode/settings.json` - Configurações do VS Code
+- `CLAUDE_4_SETUP.md` - Documentação completa
+
+### 🧪 Testar Claude 4:
+```bash
+npm run verify-claude-4
+```
+
+**Leia mais**: [CLAUDE_4_SETUP.md](./CLAUDE_4_SETUP.md)
+
+---
+
 ## 🚀 Funcionalidades
 
 ### Para Criadores:
